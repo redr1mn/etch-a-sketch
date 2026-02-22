@@ -11,7 +11,14 @@
 <body>
     <h1 class="sketch-branding">Etch-a-Sketch</h1>
     <div class="sketch-container"></div>
-    <button id="clear-button">Clear</button>
+    <div class="slide-container">
+        <input type="range" min="16" max="100" value="16" class="slider" id="myRange">
+        <span id="size-display">16x16</span>
+    </div>
+    <div class="horizontal-buttons">
+        <button id="mode-button">RGB Mode</button>
+        <button id="clear-button">Clear</button>
+    </div>
     <script src="script.js"></script>
 </body>
 
