@@ -4,6 +4,20 @@ let currentMode = "default";
 // Create grid from given size
 const container = document.querySelector(".sketch-container");
 
+// Event delegation on the container instead of each cell
+container.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    if (e.target.classList.contains("grid-cell")) {
+        draw(e);
+    }
+});
+
+container.addEventListener("mouseover", (e) => {
+    if (e.buttons === 1 && e.target.classList.contains("grid-cell")) {
+        draw(e);
+    }
+});
+
 function draw(e) {
     if (currentMode === "rgb") {
         e.target.style.backgroundColor = getRandomColor();
@@ -14,6 +28,8 @@ function draw(e) {
 
 function createInteractiveGrid(size) {
     let cellsTotal = size * size;
+    const fragment = document.createDocumentFragment();
+
     for (let i = 0; i < cellsTotal; i++) {
         const cell = document.createElement('div');
         cell.classList.add("grid-cell");
@@ -22,18 +38,10 @@ function createInteractiveGrid(size) {
         cell.style.flex = `0 0 ${cellSize}%`;
         cell.style.height = `${cellSize}%`;
 
-        cell.addEventListener("mousedown", (e) => {
-            e.preventDefault();
-            draw(e);
-        });
-        cell.addEventListener("mouseover", (e) => {
-            if (e.buttons === 1) {
-                draw(e);
-            }
-        });
-
-        container.appendChild(cell);
+        fragment.appendChild(cell);
     }
+
+    container.appendChild(fragment);
 }
 
 const clearButton = document.getElementById("clear-button");
@@ -49,14 +57,20 @@ clearButton.addEventListener("click", clearCells);
 const sliderGrid = document.getElementById("myRange");
 const displayGridSize = document.getElementById("size-display");
 
-function updateGridSize() {
+function updateDisplaySize() {
     const size = sliderGrid.value;
     displayGridSize.textContent = `${size}x${size}`;
+}
+
+function updateGridSize() {
+    const size = sliderGrid.value;
     container.innerHTML = "";
     createInteractiveGrid(size);
 }
 
-sliderGrid.addEventListener("input", updateGridSize);
+// split both events in mouse behavior to prevent constant event fires
+sliderGrid.addEventListener("input", updateDisplaySize);
+sliderGrid.addEventListener("change", updateGridSize);
 
 // Get random RGB color
 function getRandomColor() {
